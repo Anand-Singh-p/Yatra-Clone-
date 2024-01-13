@@ -1,5 +1,5 @@
 <?php
-include("db_connection.php")
+include("db_connection.php");
 
 //Create admin table
 $sql = "CREATE TABLE IF NOT EXISTS Admin(
