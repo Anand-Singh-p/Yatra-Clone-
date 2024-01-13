@@ -1,6 +1,6 @@
 <?php
 include("db_connection.php")
-try {
+
 //Create admin table
 $sql = "CREATE TABLE IF NOT EXISTS Admin(
     AdminID INT AUTO_INCREMENT PRIMARAY KEY,
@@ -10,9 +10,5 @@ $sql = "CREATE TABLE IF NOT EXISTS Admin(
 )";
 $conn->query($sql);
 echo "Table Admin created succesfully";
-}
-catch(PDOException $e) {
-    echo $sql , "<br>" . $e->getMessage();
-    
-}
+
 ?>
