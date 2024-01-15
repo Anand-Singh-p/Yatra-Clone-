@@ -10,5 +10,16 @@ $sql = "CREATE TABLE IF NOT EXISTS Admin(
 )";
 $conn->query($sql);
 echo "Table Admin created succesfully";
+//Create  Owner Table
+$sql = "CREATE TABLE IF NOTN EXISTS Owner (
+    OwnerID INT AUTO_INCREMENT PRIMARY KEY,
+    Username VARCHAR(255) NOT NULL,
+    Password VARCHAR(255) NOT NULL,
+    Email VARCHAR(255) NOT NULL,
+    DOB DATE,
+    Address VARCHAR(255)
+    )";
 
+    $CONN->query($sql);
 ?>
+echo "Table Admin created succesfully";
