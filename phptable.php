@@ -1,4 +1,4 @@
-<php
+<?php
 include("db_connection.php");
 //  create Admin table
   $sql = "CREATE TABLE Admin (
