@@ -8,7 +8,7 @@ $sql = "CREATE TABLE IF NOT EXISTS Admin(
     Password VARCHAR(255) NOT NULL,
     Email VARCHAR(255) NOT NULL
 )";
-$conn->query($sql);
+//$conn->query($sql);
 echo "Table Admin created succesfully";
 //Create  Owner Table
 $sql = "CREATE TABLE IF NOTN EXISTS Owner (
