@@ -20,6 +20,6 @@ $sql = "CREATE TABLE  Owner (
     DOB DATE,
     Address VARCHAR(255)
 )";
-$conn->query($sqlOwner);
+$conn->query($sql);
 echo "Table Owner created successfully";
   ?>
