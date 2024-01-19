@@ -5,7 +5,7 @@ class Database
     private $servername = "localhost";
     private $username = "root";
     private $password = "";
-    private $dbname = "Yatra-Clone";
+    private $dbname = "Yatra";
     private $conn = ''; // conn => connection 
 
     public function __construct()
