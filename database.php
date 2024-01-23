@@ -1,42 +1,11 @@
 <?php
-
-
-
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "Yatra";
-
-try {
-    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    //echo " Connection successful<br>";
-} catch (PDOException $e) {
-    // Log the error or handle it appropriately
-    // Avoid echoing anything that might interfere with JSON responses in your API
-    // echo "Connection failed: " . $e->getMessage();
-    //echo " Connection failed:<br>" . "<br><br>" . $e->getMessage();
-}
-
-
-// Database connection code here:
-/*class Database
+class Database
 {
-    private $servername = "localhost";
-    private $username = "root";
-    private $password = "";
-    private $dbname = "Yatra";
-    private $conn = ''; // conn => connection 
+    private $conn;
 
-    public function __construct()
+    public function __construct($conn)
     {
-        try {
-            $this->conn = new PDO("mysql:host=$this->servername;dbname=$this->dbname", $this->username, $this->password);
-            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // set PDO error mode to exception
-            echo " Connection successful<br>";
-        } catch (PDOException $e) {
-            echo " Connection failed:<br>" . "<br><br>" . $e->getMessage();
-        }
+        $this->conn = $conn;
     }
 
     public function createTables()
@@ -61,14 +30,7 @@ try {
             Email VARCHAR(255) NOT NULL       
         );";
 
-        $pq = $this->conn->prepare($q);
-
-        try {
-            $pq->execute();
-          //  echo "<br>Admin table created";
-        } catch (Exception $ee) {
-          //  echo "<br>Couldn't create Admin table." . $ee->getMessage();
-        }
+        $this->executeQuery($q, 'Admin');
     }
 
     private function createTableOwner()
@@ -82,14 +44,7 @@ try {
             Address VARCHAR(255) 
         );";
 
-        $pq = $this->conn->prepare($q);
-
-        try {
-            $pq->execute();
-          //  echo "<br>Owner table created";
-        } catch (Exception $ee) {
-           // echo "<br>Owner not created" . $ee->getMessage();
-        }
+        $this->executeQuery($q, 'Owner_details');
     }
 
     private function createTableAgent()
@@ -103,14 +58,7 @@ try {
             Address VARCHAR(255)
         );";
 
-        $pq = $this->conn->prepare($q);
-
-        try {
-            $pq->execute();
-          //  echo "<br>Agent table created";
-        } catch (Exception $ee) {
-            // echo "<br>Agent table not created." . $ee->getMessage();
-        }
+        $this->executeQuery($q, 'Agent');
     }
 
     private function createTableUser()
@@ -124,14 +72,7 @@ try {
             Address VARCHAR(255)
         );";
 
-        $pq = $this->conn->prepare($q);
-
-        try {
-            $pq->execute();
-           // echo "<br>User table created";
-        } catch (Exception $ee) {
-           // echo "<br>User table not created." . $ee->getMessage();
-        }
+        $this->executeQuery($q, 'User');
     }
 
     private function createTableTraveler()
@@ -145,14 +86,7 @@ try {
             Address VARCHAR(255)
         );";
 
-        $pq = $this->conn->prepare($q);
-
-        try {
-            $pq->execute();
-           // echo "<br>Traveler table created";
-        } catch (Exception $ee) {
-           // echo "<br>Traveler table not created." . $ee->getMessage();
-        }
+        $this->executeQuery($q, 'Traveler');
     }
 
     private function createTableManager()
@@ -168,14 +102,7 @@ try {
             HireDate DATE 
         );";
 
-        $pq = $this->conn->prepare($q);
-
-        try {
-            $pq->execute();
-           // echo "<br>Manager table created";
-        } catch (Exception $ee) {
-           // echo "<br>Manager table not created." . $ee->getMessage();
-        }
+        $this->executeQuery($q, 'Manager');
     }
 
     private function createTableCustomerSupport()
@@ -191,14 +118,7 @@ try {
             JoinDate DATE
         );";
 
-        $pq = $this->conn->prepare($q);
-
-        try {
-            $pq->execute();
-           // echo "<br>CustomerSupport table created";
-        } catch (Exception $ee) {
-           // echo "<br>CustomerSupport table not created." . $ee->getMessage();
-        }
+        $this->executeQuery($q, 'CustomerSupport');
     }
 
     private function createTableManagerAdminRelationship()
@@ -211,14 +131,7 @@ try {
             FOREIGN KEY (AdminID) REFERENCES Admin(AdminID)
         );";
 
-        $pq = $this->conn->prepare($q);
-
-        try {
-            $pq->execute();
-          //  echo "<br>ManagerAdminRelationship table created";
-        } catch (Exception $ee) {
-           // echo "<br>ManagerAdminRelationship table not created." . $ee->getMessage();
-        }
+        $this->executeQuery($q, 'ManagerAdminRelationship');
     }
 
     private function createTableCustomerSupportUserRelationship()
@@ -231,19 +144,26 @@ try {
             FOREIGN KEY (UserID) REFERENCES User(UserID)
         );";
 
-        $pq = $this->conn->prepare($q);
+        $this->executeQuery($q, 'CustomerSupportUserRelationship');
+    }
+
+    private function executeQuery($query, $tableName)
+    {
+        $pq = $this->conn->prepare($query);
 
         try {
             $pq->execute();
-          //  echo "<br>CustomerSupportUserRelationship table created";
+            echo "<br>$tableName table created";
         } catch (Exception $ee) {
-          //  echo "<br>CustomerSupportUserRelationship table not created." . $ee->getMessage();
+            echo "<br>Couldn't create $tableName table." . $ee->getMessage();
         }
     }
 }
 
+// Include the database connection file
+include "db_connection.php";
+
 // Instantiate the database class and create tables
-$db_table = new Database();
+$db_table = new Database($conn);
 $db_table->createTables();
-*/
 ?>
