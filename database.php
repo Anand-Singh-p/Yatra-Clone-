@@ -1,4 +1,4 @@
-<?php
+<?php 
 class Database
 {
     private $conn;
@@ -166,4 +166,5 @@ include "db_connection.php";
 // Instantiate the database class and create tables
 $db_table = new Database($conn);
 $db_table->createTables();
+
 ?>
