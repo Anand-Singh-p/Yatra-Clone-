@@ -1,4 +1,4 @@
-<?php 
+<?php  
 class Database
 {
     private $conn;
@@ -12,7 +12,7 @@ class Database
     {
         $this->createTableAdmin();
         $this->createTableOwner();
-        $this->createTableAgent();
+        $this->createTableAjent();
         $this->createTableUser();
         $this->createTableTraveler();
         $this->createTableManager();
@@ -47,9 +47,9 @@ class Database
         $this->executeQuery($q, 'Owner_details');
     }
 
-    private function createTableAgent()
+    private function createTableAjent()
     {
-        $q = "CREATE TABLE Agent (
+        $q = "CREATE TABLE Ajent (
             AgentID INT AUTO_INCREMENT PRIMARY KEY,
             Username VARCHAR(255) NOT NULL,
             Password VARCHAR(255) NOT NULL,
@@ -58,7 +58,7 @@ class Database
             Address VARCHAR(255)
         );";
 
-        $this->executeQuery($q, 'Agent');
+        $this->executeQuery($q, 'Ajent');
     }
 
     private function createTableUser()

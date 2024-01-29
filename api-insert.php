@@ -1,7 +1,4 @@
 <?php
-
-
-
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
@@ -11,12 +8,13 @@ include "db_connection.php";
 try {
     // Check if the connection is established
     if ($conn) {
-        // Check if the table name is provided in the request
-        if (isset($_GET['table'])) {
+        // Check if the table name and ID are provided in the URL
+        if (isset($_GET['table']) && isset($_GET['id'])) {
             $table = $_GET['table'];
+            $id = $_GET['id'];
 
-            // SQL query to select all records from the specified table
-            $sql = "SELECT * FROM $table";
+            // SQL query to select a record from the specified table based on the ID
+            $sql = "SELECT * FROM $table WHERE {$table}ID = {$id}";
 
             // Prepare the SQL statement
             $stmt = $conn->prepare($sql);
@@ -24,20 +22,20 @@ try {
             // Execute the statement
             $stmt->execute();
 
-            // Fetch all records as an associative array
+            // Fetch the record as an associative array
             $output = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            // Check if records are found
+            // Check if a record is found
             if (!empty($output)) {
-                // Return the records as JSON
+                // Return the record as JSON
                 echo json_encode(['status' => 'success', 'data' => $output]);
             } else {
-                // Return a message if no records are found
-                echo json_encode(['status' => 'error', 'message' => "No Records Found in table $table."]);
+                // Return a message if no record is found
+                echo json_encode(['status' => 'error', 'message' => "No Record Found in table $table with ID $id."]);
             }
         } else {
-            // Return an error message if the table name is not provided
-            echo json_encode(['status' => 'error', 'message' => 'Table name not provided.']);
+            // Return an error message if the table name or ID is not provided
+            echo json_encode(['status' => 'error', 'message' => 'Table name or ID not provided in the URL.']);
         }
     } else {
         // Return an error message if the connection is not established
@@ -47,6 +45,5 @@ try {
     // Return an error message if the SQL query fails
     echo json_encode(['status' => 'error', 'message' => 'SQL Query Failed.', 'error' => $e->getMessage()]);
 }
-
 
 ?>
