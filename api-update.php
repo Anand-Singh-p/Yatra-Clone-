@@ -1,6 +1,13 @@
 <?php
+
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST');
+header('Access-Control-Allow-Headers:Access-Control-Allow-Headers,Content-Type,Access-Control-Allow-Methods,Authorization,X-Requested-Width ');
+
+$data = json_decode(file_get_contents("php://input"), true);
+$tableName = $data['table'];
+$tableFields = $data['fields']; // Fields and their values for the specified table
 
 // Include the database connection file
 include "db_connection.php";
@@ -8,34 +15,30 @@ include "db_connection.php";
 try {
     // Check if the connection is established
     if ($conn) {
-        // Check if the table name and ID are provided in the URL
-        if (isset($_GET['table']) && isset($_GET['id'])) {
-            $table = $_GET['table'];
-            $id = $_GET['id'];
+        // Check if the table name and fields are provided in the request
+        if (!empty($tableName) && !empty($tableFields)) {
 
-            // SQL query to select a record from the specified table based on the ID
-            $sql = "SELECT * FROM $table WHERE {$table}ID = {$id}";
+            // Generate placeholders for prepared statement
+            $placeholders = implode(', ', array_fill(0, count($tableFields), '?'));
+
+            // SQL query to insert records into the specified table
+            $sql = "INSERT INTO $tableName(" . implode(', ', array_keys($tableFields)) . ") VALUES ($placeholders)";
 
             // Prepare the SQL statement
             $stmt = $conn->prepare($sql);
 
+            // Bind parameters
+            $i = 1;
+            foreach ($tableFields as $field => $value) {
+                $stmt->bindValue($i++, $value);
+            }
+
             // Execute the statement
             $stmt->execute();
 
-            // Fetch the record as an associative array
-            $output = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-            // Check if a record is found
-            if (!empty($output)) {
-                // Return the record as JSON
-                echo json_encode(['status' => 'success', 'data' => $output]);
-            } else {
-                // Return a message if no record is found
-                echo json_encode(['status' => 'error', 'message' => "No Record Found in table $table with ID $id."]);
-            }
+            echo json_encode(['status' => 'true', 'message' => "$tableName record inserted."]);
         } else {
-            // Return an error message if the table name or ID is not provided
-            echo json_encode(['status' => 'error', 'message' => 'Table name or ID not provided in the URL.']);
+            echo json_encode(['status' => 'error', 'message' => 'Table name or fields not provided.']);
         }
     } else {
         // Return an error message if the connection is not established
@@ -43,7 +46,7 @@ try {
     }
 } catch (PDOException $e) {
     // Return an error message if the SQL query fails
-    echo json_encode(['status' => 'error', 'message' => 'SQL Query Failed.', 'error' => $e->getMessage()]);
+    echo json_encode(['status' => 'false', 'message' => "$tableName Record not inserted.", 'error' => $e->getMessage()]);
 }
 
 ?>
