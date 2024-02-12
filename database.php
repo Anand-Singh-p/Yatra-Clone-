@@ -12,13 +12,14 @@ class Database
     {
         $this->createTableAdmin();
         $this->createTableOwner();
-        $this->createTableAjent();
+        $this->createTableAgent();
         $this->createTableUser();
         $this->createTableTraveler();
         $this->createTableManager();
         $this->createTableCustomerSupport();
         $this->createTableManagerAdminRelationship();
         $this->createTableCustomerSupportUserRelationship();
+        $this->createTablebookticket();
     }
 
     private function createTableAdmin()
@@ -47,9 +48,9 @@ class Database
         $this->executeQuery($q, 'Owner_details');
     }
 
-    private function createTableAjent()
+    private function createTableAgent()
     {
-        $q = "CREATE TABLE Ajent (
+        $q = "CREATE TABLE Agent (
             AgentID INT AUTO_INCREMENT PRIMARY KEY,
             Username VARCHAR(255) NOT NULL,
             Password VARCHAR(255) NOT NULL,
@@ -58,7 +59,7 @@ class Database
             Address VARCHAR(255)
         );";
 
-        $this->executeQuery($q, 'Ajent');
+        $this->executeQuery($q, 'Agent');
     }
 
     private function createTableUser()
@@ -145,6 +146,17 @@ class Database
         );";
 
         $this->executeQuery($q, 'CustomerSupportUserRelationship');
+    }
+    private function createTablebookticket ()
+    {
+        $q = "CREATE TABLE Ticket(
+              TicketID INT AUTO_INCREMENT PRIMARY KEY,
+              UserID INT,
+              TicketType VARCHAR(255) NOT NULL,
+              Date DATE, 
+              FOREIGN KEY (UserID) REFERENCES User(UserID)
+            );";
+            $this->executeQuery($q, 'Ticket');
     }
 
     private function executeQuery($query, $tableName)

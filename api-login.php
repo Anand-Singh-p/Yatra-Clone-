@@ -53,4 +53,6 @@ try {
     echo json_encode(['status' => 'error', 'message' => "$userType login failed.", 'error' => $e->getMessage()]);
 }
 
+
+
 ?>
