@@ -41,4 +41,4 @@ try {
     echo json_encode(['status' => 'error', 'message' => 'SQL Query Failed.', 'error' => $e->getMessage()]);
 }
 
-?>
+

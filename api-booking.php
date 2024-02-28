@@ -9,42 +9,35 @@ include "db_connection.php";
 
 $data = json_decode(file_get_contents("php://input"), true);
 $userID = $data['userID'];
-$userType = $data['userType']; // Assuming you have the user type after login
-$ticketDetails = $data['ticketDetails']; // Assuming you have details like ticket type, date, etc.
+$userType = $data['userType']; //  we have the user type after login
+$bookingType = $data['bookingType']; // Type can be 'self', 'family', or 'agent'
+$ticketDetails = $data['ticketDetails']; //  we have details like ticket type
+$travelers = $data['travelers']; // Array of traveler details for family booking
 
 try {
     // Check if the connection is established
     if ($conn) {
-        // Determine the ID and table based on the user type
-        $idFieldName = '';
-        $tableName = '';
-
-        if ($userType === 'user') {
-            $idFieldName = 'UserID';
-            $tableName = 'User';
-        } elseif ($userType === 'agent') {
-            $idFieldName = 'AgentID';
-            $tableName = 'Agent';
-        } else {
-            echo json_encode(['status' => 'error', 'message' => 'Invalid user type.']);
-            exit();
-        }
-
-        // Fetch the corresponding ID for the given user type
-        $fetchIDQuery = "SELECT $idFieldName FROM $tableName WHERE $idFieldName = ?";
-        $stmt = $conn->prepare($fetchIDQuery);
-        $stmt->execute([$userID]);
-        $userExists = $stmt->rowCount() > 0;
-
-        if (!$userExists) {
-            echo json_encode(['status' => 'error', 'message' => 'Invalid user ID or user type.']);
-            exit();
-        }
-
         // Insert the ticket booking into the database
-        $insertTicket = "INSERT INTO Ticket ($idFieldName, TicketType, Date) VALUES (?, ?, ?)";
+        $insertTicket = "INSERT INTO Ticket (UserID, TicketType, Date) VALUES (?, ?, ?)";
         $stmt = $conn->prepare($insertTicket);
-        $stmt->execute([$userID, $ticketDetails['ticketType'], $ticketDetails['date']]);
+
+        // Check the booking type
+        if ($bookingType === 'self' || $bookingType === 'family') {
+            // Booking for self or family
+            foreach ($travelers as $traveler) {
+                // Insert each family member's ticket
+                $stmt->execute([$userID, $traveler['ticketType'], $traveler['date']]);
+            }
+        } elseif ($bookingType === 'agent') {
+            // Booking by agent on behalf of the user
+            foreach ($travelers as $traveler) {
+                // Insert each family member's ticket with the user's ID
+                $stmt->execute([$userID, $traveler['ticketType'], $traveler['date']]);
+            }
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid booking type.']);
+            exit();
+        }
 
         echo json_encode(['status' => 'success', 'message' => 'Ticket booked successfully.']);
     } else {
@@ -55,4 +48,4 @@ try {
     // Return an error message if the SQL query fails
     echo json_encode(['status' => 'error', 'message' => 'Ticket booking failed.', 'error' => $e->getMessage()]);
 }
-
+?>
